@@ -1,0 +1,24 @@
+- name: install python314 python3.14-pip
+  dnf:
+    name:
+      - python3.14
+      - python3.14-pip
+    state: present
+
+- name: print python version
+  command: python3.14 --version
+  register: python_default
+- debug:
+    var: python_default.stdout
+
+# - name: Create Python virtual environment
+#   ansible.builtin.command:
+#   cmd: python3.14 -m venv /app/.venv
+#   creates: /app/.venv/bin/activate
+#   args:
+#   chdir: /app
+- name: install dependencies in virtual environment
+  ansible.builtin.pip:
+    requirements: /app/requirements.txt
+    virtualenv: /app/.venv
+    virtualenv_command: python3.14 -m venv
