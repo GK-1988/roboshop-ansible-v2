@@ -11,7 +11,12 @@
 - name: systemd setup
   include_role:
     name: common
-    tasks_from: systemd-setup   
+    tasks_from: systemd-setup
+
+- name: Install mysql client
+  ansible.builtin.package:
+    name: mysql
+    state: present  
       
 
 - name: check cities data exist or not
