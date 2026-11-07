@@ -10,7 +10,7 @@
     ami_id: ami-0055977a6e828a4f4
   tasks:
   - name: create security groups
-    amazon.aws.ec2_group:
+    amazon.aws.ec2_groups:
       state: present
       name: "roboshop-{{ item }}"
       description: "Security Group for {{ item }}"
@@ -88,7 +88,7 @@
         - proto: tcp
           ports:
             - 15672
-          cidr_ip: "{{ my_ip }}"
+          group_name: roboshop-common
 
   # Catalogue
 
