@@ -77,3 +77,11 @@
       wait: false
     loop: "{{ instances }}"
     when: action == "delete"
+
+  - name: delete security groups for all components
+    amazon.aws.ec2_group:
+      state: absent
+      name: "roboshop-{{ item }}"
+      region: us-east-1
+    loop: "{{ instances }}"
+    when: action == "delete"
