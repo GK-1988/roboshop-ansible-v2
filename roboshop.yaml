@@ -10,7 +10,7 @@
     ami_id: ami-0055977a6e828a4f4
   tasks:
   - name: create security groups
-    amazon.aws.ec2_groups:
+    amazon.aws.ec2_group:
       state: present
       name: "roboshop-{{ item }}"
       description: "Security Group for {{ item }}"
