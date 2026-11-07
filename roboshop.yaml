@@ -80,6 +80,7 @@
 
   - name: remove all ingress rules
     amazon.aws.ec2_group:
+      state: absent
       name: "roboshop-{{ item }}"
       region: us-east-1
       purge_rules: true

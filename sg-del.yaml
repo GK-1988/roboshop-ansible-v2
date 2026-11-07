@@ -1,0 +1,34 @@
+- name: Delete security groups and ingress rules for all components
+  hosts: local
+  connection: local
+  vars:
+    # ansible-playbook roboshop.yaml -e "instances=['mongodb', 'redis']"
+    # ansible-playbook roboshop.yaml -e "action=delete"
+    instances: ["frontend","payment","shipping","cart","user","catalogue","rabbitmq","mysql","redis","mongodb"]
+    action: delete
+    domain_name: opsify.online
+    ami_id: ami-0055977a6e828a4f4
+  tasks:
+  - name: remove all ingress rules
+    amazon.aws.ec2_group:
+        state: present
+        name: "roboshop-{{ item }}"
+        description: "temporary"
+        region: us-east-1
+        purge_rules: true
+        rules: []
+    loop: "{{ instances }}"
+    when: action == "delete"
+
+  - name: wait for sg rule cleanup
+    pause:
+      seconds: 10
+    when: action == "delete"
+
+  - name: delete security groups for all components
+    amazon.aws.ec2_group:
+      state: absent
+      name: "roboshop-{{ item }}"
+      region: us-east-1
+    loop: "{{ instances }}"
+    when: action == "delete"
