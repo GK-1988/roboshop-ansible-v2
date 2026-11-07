@@ -23,12 +23,12 @@
     path: /app
     state: directory
 
-- name: download user application
+- name: download {{ component }} application
   get_url:
     url: https://raw.github{{ component }}content.com/daws-92s/roboshop-documentation/refs/heads/main/artifacts/{{ component }}-v4.zip
     dest: /tmp/{{ component }}.zip
 
-- name: unzip the user receipe
+- name: unzip the {{ component }} receipe
   unarchive:
     src: /tmp/{{ component }}.zip
     dest: /app
