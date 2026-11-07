@@ -1,0 +1,9 @@
+- name: reload the daemon
+  systemd_service:
+    daemon_reload: true
+
+- name: start and enable user
+  service:
+    name: user
+    state: restarted
+    enabled: yes
