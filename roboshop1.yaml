@@ -175,13 +175,7 @@
             - 8080
           group_name: roboshop-frontend
 
-  # Dispatch
-
-  - name: Dispatch Rules
-    amazon.aws.ec2_group:
-      name: roboshop-dispatch
-      description: Security Group for dispatch
-      region: us-east-1        
+  
 
   # Frontend
 

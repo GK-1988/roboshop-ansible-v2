@@ -1,0 +1,81 @@
+---
+#Manage Roboshop Infrastructure
+- name: manage roboshop infrastructure
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    #ansible-playbook  01-roboshop.yaml -e "instances=['mongodb', 'redis', 'mysql', 'rabbitmq', 'frontend', 'catalogue']"
+    #ansible-playbook 01-roboshop.yaml -e "action=delete"
+    #Actions
+    #create
+    #delete
+    action: "create"
+    instances: ['mongodb', 'redis', 'mysql', 'rabbitmq', 'frontend', 'catalogue','user', 'cart', 'shipping', 'payment']
+    ami_id: ami-0055977a6e828a4f4
+    domain_name: opsify.online
+    aws_region: us-east-1
+    instance_type: t3.micro
+  tasks:
+    - name: create EC2 instance
+      amazon.aws.ec2_instance:
+        name: "roboshop-{{ item }}"
+        image_id: "{{ ami_id }}"
+        instance_type: "{{ instance_type }}"
+        security_groups:
+          - roboshop-common
+          - roboshop-{{ item }}
+        region: "{{ aws_region }}"
+      loop: "{{ instances }}"
+      when: action == "create"
+      register: "ec2_output"
+
+#debugging of ec2 creation
+    - name: display ec2 creation output
+      debug:
+        var: ec2_output
+      when: action == "create"
+
+# Creating Route53 DBS Records
+    - name: Create Route53 DNS records
+      amazon.aws.route53:
+        state: present
+        zone: "{{ domain_name}}"
+        record: "{{ item.item }}.{{ domain_name }}"
+        type: A
+        ttl: 1
+        value: "{{ item.instances[0].private_ip_address }}"
+        overwrite: yes
+      loop: "{{ ec2_output.results }}"
+      when: action == "create"
+
+# Deleting Route53 DNS Record
+    - name: Delete route53 record
+      amazon.aws.route53:
+        state: absent
+        zone: "{{ domain_name }}"
+        record: "{{ item }}.{{ domain_name }}"
+        type: A
+        ttl: 1
+      loop: "{{ instances }}"
+      when: action == "delete"
+
+# Deleting EC2 Instances
+    - name: delete EC2 instance
+      amazon.aws.ec2_instance:
+        state: absent
+        name: "roboshop-{{ item }}"
+        region: "{{ aws_region }}"
+        wait: true
+      loop: "{{ instances }}"
+      when: action == "delete"
+
+
+
+
+
+
+
+
+
