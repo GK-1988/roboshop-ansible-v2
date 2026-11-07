@@ -80,6 +80,16 @@
             - 5672
           group_name: roboshop-payment
 
+        - proto: tcp
+          ports:
+            - 5672
+          group_name: roboshop-dispatch
+
+        - proto: tcp
+          ports:
+            - 15672
+          cidr_ip: "{{ my_ip }}"
+
   # Catalogue
 
   - name: Catalogue Rules
@@ -164,6 +174,14 @@
           ports:
             - 8080
           group_name: roboshop-frontend
+
+  # Dispatch
+
+  - name: Dispatch Rules
+    amazon.aws.ec2_group:
+      name: roboshop-dispatch
+      description: Security Group for dispatch
+      region: us-east-1        
 
   # Frontend
 
