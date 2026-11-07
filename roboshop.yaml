@@ -74,7 +74,7 @@
       state: absent
       name: "roboshop-{{ item }}"
       region: us-east-1
-      wait: false
+      wait: true
     loop: "{{ instances }}"
     when: action == "delete"
 
