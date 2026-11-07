@@ -18,6 +18,166 @@
     loop: "{{ instances }}"
     when: action == "create"
 
+  # MongoDB
+
+  - name: MongoDB Rules
+    amazon.aws.ec2_group:
+      name: roboshop-mongodb
+      description: Security Group for mongodb
+      region: us-east-1
+      rules:
+        - proto: tcp
+          ports:
+            - 27017
+          group_name: roboshop-catalogue
+
+        - proto: tcp
+          ports:
+            - 27017
+          group_name: roboshop-user
+
+  # Redis
+
+  - name: Redis Rules
+    amazon.aws.ec2_group:
+      name: roboshop-redis
+      description: Security Group for redis
+      region: us-east-1
+      rules:
+        - proto: tcp
+          ports:
+            - 6379
+          group_name: roboshop-user
+
+        - proto: tcp
+          ports:
+            - 6379
+          group_name: roboshop-cart
+
+  # MySQL
+
+  - name: MySQL Rules
+    amazon.aws.ec2_group:
+      name: roboshop-mysql
+      description: Security Group for mysql
+      region: us-east-1
+      rules:
+        - proto: tcp
+          ports:
+            - 3306
+          group_name: roboshop-shipping
+
+  # RabbitMQ
+
+  - name: RabbitMQ Rules
+    amazon.aws.ec2_group:
+      name: roboshop-rabbitmq
+      description: Security Group for rabbitmq
+      region: us-east-1
+      rules:
+        - proto: tcp
+          ports:
+            - 5672
+          group_name: roboshop-payment
+
+  # Catalogue
+
+  - name: Catalogue Rules
+    amazon.aws.ec2_group:
+      name: roboshop-catalogue
+      description: Security Group for catalogue
+      region: us-east-1
+      rules:
+        - proto: tcp
+          ports:
+            - 8080
+          group_name: roboshop-frontend
+
+        - proto: tcp
+          ports:
+            - 8080
+          group_name: roboshop-cart
+
+  # User
+
+  - name: User Rules
+    amazon.aws.ec2_group:
+      name: roboshop-user
+      description: Security Group for user
+      region: us-east-1
+      rules:
+        - proto: tcp
+          ports:
+            - 8080
+          group_name: roboshop-frontend
+
+        - proto: tcp
+          ports:
+            - 8080
+          group_name: roboshop-payment
+
+  # Cart
+
+  - name: Cart Rules
+    amazon.aws.ec2_group:
+      name: roboshop-cart
+      description: Security Group for cart
+      region: us-east-1
+      rules:
+        - proto: tcp
+          ports:
+            - 8080
+          group_name: roboshop-frontend
+
+        - proto: tcp
+          ports:
+            - 8080
+          group_name: roboshop-shipping
+
+        - proto: tcp
+          ports:
+            - 8080
+          group_name: roboshop-payment
+
+  # Shipping
+
+  - name: Shipping Rules
+    amazon.aws.ec2_group:
+      name: roboshop-shipping
+      description: Security Group for shipping
+      region: us-east-1
+      rules:
+        - proto: tcp
+          ports:
+            - 8080
+          group_name: roboshop-frontend
+
+  # Payment
+
+  - name: Payment Rules
+    amazon.aws.ec2_group:
+      name: roboshop-payment
+      description: Security Group for payment
+      region: us-east-1
+      rules:
+        - proto: tcp
+          ports:
+            - 8080
+          group_name: roboshop-frontend
+
+  # Frontend
+
+  - name: Frontend Rules
+    amazon.aws.ec2_group:
+      name: roboshop-frontend
+      description: Security Group for frontend
+      region: us-east-1
+      rules:
+        - proto: tcp
+          ports:
+            - 80
+          cidr_ip: 0.0.0.0/0  
+
   - name: create ec2 instance
     amazon.aws.ec2_instance:
       name: "roboshop-{{ item }}"
