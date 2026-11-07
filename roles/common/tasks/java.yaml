@@ -1,0 +1,27 @@
+- name: enable maven 3.9
+  command: dnf module enable maven:3.9 -y
+
+- name: install maven and java25
+  dnf:
+    name: 
+      - maven
+      - java-25-openjdk-devel
+      - maven-openjdk25 #instaling this, so that we no need to set JAV_HOME again
+    state: present
+
+- name: install mvn dependencies
+  ansible.builtin.command: mvn clean package
+  args:
+    chdir: /app
+
+- name: rename jar file
+  copy:
+    src: /app/target/shipping.jar
+    dest: /app/shipping.jar
+    remote_src: yes   
+
+# - name: move {{ component }} jar file
+#   command: mv target/{{ component }}.jar {{ component }}.jar
+#   args:
+#     chdir: /app  
+

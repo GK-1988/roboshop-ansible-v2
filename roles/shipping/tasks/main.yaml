@@ -1,0 +1,69 @@
+- name: application setup
+  include_role:
+    name: common
+    tasks_from: app-setup
+
+- name: java setup
+  include_role:
+    name: common
+    tasks_from: java
+
+- name: systemd setup
+  include_role:
+    name: common
+    tasks_from: systemd-setup   
+      
+
+- name: check cities data exist or not
+  command: mysql -h "{{ mysql_host }}" -u root -p{{ mysql_root_password }} -N -B -e "SELECT COUNT(*) FROM cities.cities;"
+  register: cities_count
+  ignore_errors: true
+  tags:
+  - mysql
+
+- name: print cities_count
+  debug:
+    msg: "{{ cities_count }}"
+  tags:
+  - mysql
+
+- name: Load cities data into mysql
+  ansible.builtin.shell:
+    mysql -h {{ mysql_host }} -uroot -p{{ mysql_root_password }} < /app/db/master-data.sql
+  when: cities_count.rc != 0 or cities_count.stdout | int == 0
+  args:
+    executable: /bin/bash
+  # tags:
+  #   - mysql
+
+- name: creating shipping user
+  ansible.builtin.shell:
+    mysql -h {{ mysql_host }} -uroot -p{{ mysql_root_password }} < /app/db/app-user.sql
+  args:
+    executable: /bin/bash
+  # tags:
+  # - mysql
+
+- name: restart shipping service
+  include_role:
+    name: common
+    tasks_from: restart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
